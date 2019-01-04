@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1> Index </h1>
+
+<div class="sign-buttons-container">
+    <a class="btn btn-secondary" href="{% url 'three_k:login' %}">Login</a>
+    <a class="btn btn-secondary" href="{% url 'three_k:signup' %}">SignUp</a>
+</div>
+
+
+{% endblock %}
