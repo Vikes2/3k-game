@@ -1,7 +1,52 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1> HOME </h1>
 
 
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1> HOME </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button id="play-button" class="btn btn-success">Play</button>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ block.super }}
+<script>
+
+    let gameSocket;
+
+    $(document).on('click', '#play-button', () =>{
+        alert("Dołączono do Q");
+        initSocket();
+        setTimeout(()=> {
+            gameSocket.send(JSON.stringify({message: "Elo"}));        
+        }, 3000);
+    });    
+
+
+    function initSocket(){
+        gameSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/game/');
+        gameSocket.onmessage = function(e){
+            let data = JSON.parse(e.data);
+            console.log(data);
+        }
+    }
+
+    
+
+
+
+</script>
 {% endblock %}

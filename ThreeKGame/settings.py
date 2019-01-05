@@ -123,3 +123,12 @@ STATIC_URL = '/static/'
 
 LOGIN_REDIRECT_URL = 'three_k:home'
 LOGOUT_REDIRECT_URL = 'three_k:index'
+
+CHANNEL_LAYERS={ 
+    "default": { 
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "TEST_CONFIG": { 
+            "expiry": 100500, 
+        }, 
+    }
+} 
