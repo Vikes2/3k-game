@@ -1,3 +1,29 @@
 body{
-    background: grey;
+    background: #808080;
+}
+
+.fields {
+    display: flex;
+}
+
+.fields > .field:first-child {
+    border-left: none;
+}
+
+.game > .container > .row:first-child .field {
+    border-top: none;
+}
+
+.field {
+    cursor: pointer;
+    width: 160px;
+    height: 160px;
+    padding: 20px;
+    border-top: solid 1px black;
+    border-left: solid 1px black;
+}
+
+.field img {
+    max-width: 100%;
+    max-height: 100%;
 }
