@@ -28,11 +28,11 @@
     $(document).on('click', '#play-button', () =>{
         alert("Dołączono do Q");
         initSocket();
-        setTimeout(()=> {
-            gameSocket.send(JSON.stringify({message: "Elo"}));        
-        }, 3000);
     });    
 
+    //setTimeout(()=> {
+    //    gameSocket.send(JSON.stringify({message: "Elo"}));        
+    //}, 3000);
 
     function initSocket(){
         gameSocket = new WebSocket(
