@@ -96,3 +96,31 @@ class Match:
     def match_start(self, arg):
         self._match_start = arg
         self._notify()
+
+class Game:
+    def __init__(self):
+        self.board = dict()
+
+
+
+class FlyweightFactory(object):
+    def __init__(self, cls):
+        self._cls = cls
+        self._instances = dict()
+
+    def get_instance(self, *args, **kargs):
+        return self._instances.setdefault(
+                (args, tuple(kargs.items())),
+                self._cls(*args, **kargs)
+            )
+
+
+#----------------------------------------------------------
+class Mark(object):
+    def __init__(self, type):
+        self.type = type
+
+# SharpFactory = FlyweightFactory(Sharp)
+# CircleFactory = FlyweightFactory(Circle)
+
+# SharpFactory.get_instance()
