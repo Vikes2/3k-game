@@ -64,7 +64,7 @@ class GameConsumer(WebsocketConsumer):
                 self.game_group_name,
                 {
                     'type': 'game_message',
-                    'message': text
+                    'message': text,
                 }
             )
 

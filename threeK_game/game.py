@@ -67,6 +67,24 @@ class Match:
     def __init__(self, username_a, username_b):
         self._observers = set()
         self.create_match_model(username_a, username_b)
+        self.game_list = []
+        self.is_end_match = False
+        self.run_games()
+
+    def run_games(self):
+        #the first win
+        #create game
+        #game_model = self.match_model.game_set.create()
+        game_obj = Game(self)
+        self.game_list.append(game_obj)
+
+    def finish_game(self, result):
+        if result:
+            self.is_end_match = True
+            #end match
+        else:
+            self.run_games()
+
 
     def create_match_model(self, username_a, username_b):
         print(username_a, username_b, end="---")
@@ -98,8 +116,23 @@ class Match:
         self._notify()
 
 class Game:
-    def __init__(self):
+    def __init__(self, match):
         self.board = dict()
+        self.is_finished = False
+        self.match = match
+        self.create_game_model(match.match_model)
+        self.side = True
+
+    def create_game_model(self, match_model):
+        self.game_model = match_model.game_set.create()
+
+    def run_game(self):
+        
+        pass
+
+    def end_game(self, result):
+        self.is_finished = False
+        self.match.finish_game(result)
 
 
 
