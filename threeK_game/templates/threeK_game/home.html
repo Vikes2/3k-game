@@ -14,6 +14,19 @@
             <button id="play-button" class="btn btn-success">Play</button>
         </div>
     </div>
+    <div class="row">
+        <div class="col">
+            <input type="text" class="test-x-input" >x</input>
+        </div>
+        <div class="col">
+            <input type="text" class="test-y-input" >y</input>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button class="test-button btn btn-success">send</button>
+        </div>
+    </div>
 
 </div>
 
@@ -30,9 +43,20 @@
         initSocket();
     });    
 
-    //setTimeout(()=> {
-    //    gameSocket.send(JSON.stringify({message: "Elo"}));        
-    //}, 3000);
+
+    $(document).on('click', '.test-button', () =>{
+        gameSocket.send(JSON.stringify({
+                message: "move",
+                x: $('.test-x-input').val(),
+                y: $('.test-y-input').val(),
+            }));        
+
+        //console.log($('.test-x-input').val())
+        //Console.Log($('test-y-input').value)
+
+
+    }); 
+
 
     function initSocket(){
         gameSocket = new WebSocket(

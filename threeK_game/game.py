@@ -1,4 +1,5 @@
 import abc
+import random
 from .models import Match as mMatch, Profile
 
 class QueueI(abc.ABC):
@@ -55,7 +56,7 @@ class GameManager(object):
     def create_new_game(self):
         player_a = self.queue.pop()
         player_b = self.queue.pop()
-        new_match= Match(player_a.scope['user'].username, player_b.scope['user'].username)
+        new_match= Match(player_a, player_b)
         print("match created")
         new_match.attach(player_a)
         new_match.attach(player_b)
@@ -65,11 +66,12 @@ class GameManager(object):
 
 class Match:
     def __init__(self, username_a, username_b):
+        self.player_a = username_a
+        self.player_b = username_b
         self._observers = set()
-        self.create_match_model(username_a, username_b)
+        self.create_match_model(username_a.scope['user'].username, username_b.scope['user'].username)
         self.game_list = []
         self.is_end_match = False
-        self.run_games()
 
     def run_games(self):
         #the first win
@@ -114,6 +116,7 @@ class Match:
     def match_start(self, arg):
         self._match_start = arg
         self._notify()
+        self.run_games()
 
 class Game:
     def __init__(self, match):
@@ -121,20 +124,24 @@ class Game:
         self.is_finished = False
         self.match = match
         self.create_game_model(match.match_model)
-        self.side = True
+        self.a_side = (random.random() > 0.5)
+        self.group_message("Gra została utworzona", "log")
+        self.run_game()
 
     def create_game_model(self, match_model):
         self.game_model = match_model.game_set.create()
 
     def run_game(self):
-        
-        pass
+        player = "A" if self.a_side else "B"
+        self.group_message("Game is on! Player " + player + " is your move", "log")
 
     def end_game(self, result):
         self.is_finished = False
         self.match.finish_game(result)
 
-
+    def group_message(self, text, content_type):
+        print("\nmaking_group_message\n")
+        self.match.player_a.group_message(text, content_type)
 
 class FlyweightFactory(object):
     def __init__(self, cls):

@@ -53,9 +53,11 @@ class GameConsumer(WebsocketConsumer):
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
+        x = text_data_json['x']
+        y = text_data_json['y']
+        print("hello from socket receive ", message, x)
 
-
-    def group_message(self, text):
+    def group_message(self, text, content_type):
 
         if self.is_in_group == False:
             print("Nie jestes w grupie")
@@ -64,13 +66,16 @@ class GameConsumer(WebsocketConsumer):
                 self.game_group_name,
                 {
                     'type': 'game_message',
+                    'content_type': content_type,
                     'message': text,
                 }
             )
 
     def game_message(self, event):
         message = event['message']
+        content_type = event['content_type']
 
         self.send(text_data=json.dumps({
-            'message': message
+            'message': message,
+            'content_type': content_type,
         }))
