@@ -85,7 +85,8 @@ class Match:
             sender_is_a = None
             print("bugg - receive_message in match")
         
-        self.game_list[-1].receive_move(text_data, sender_is_a)
+        if self.game_list[-1].is_finished == False:
+            self.game_list[-1].receive_move(text_data, sender_is_a)
 
     def run_games(self):
         #the first win
@@ -95,11 +96,15 @@ class Match:
         self.game_list.append(game_obj)
 
     def finish_game(self, result):
-        if result:
-            self.is_end_match = True
+        if result == "draw":
+            self.run_games()
             #end match
         else:
-            self.run_games()
+            self.is_end_match = True
+            self.end_match()
+
+    def end_match(self):
+        print("end match")
 
 
     def create_match_model(self, username_a, username_b):
@@ -146,29 +151,95 @@ class Game:
         self.new_round()
 
     def receive_move(self, text_data, sender):
-        player = "A" if self.a_side else "B"
         text_data_json = json.loads(text_data)
-        x = text_data_json['x']
-        y = text_data_json['y']
-        if self.a_side == sender:
-            #correct (a_move)
-            print("(GAME)player " + player + " make a move :" + x + " " + y)
-            if (x, y) in self.board:
-                print("(GAME) error receive move in game: mark already exists")
-                return
-            self.board[(x, y)] = self.markFactory.get_instance(player)
-            self.group_message(json.dumps({
-                'x' : x,
-                'y' : y,
-                'player' : player,
-            }), "move")
-            
-        else:
-            print("(GAME) error receive move in game")
-            return
+        message = text_data_json['message']
 
-        self.a_side = not self.a_side
-        self.new_round()
+        if message == "move":
+            player = "A" if self.a_side else "B"
+            x = text_data_json['x']
+            y = text_data_json['y']
+            if self.a_side == sender:
+                #correct
+                print("(GAME)player " + player + " make a move :" + x + " " + y)
+                if (x, y) in self.board:
+                    print("(GAME) error receive move in game: mark already exists")
+                    return
+                self.board[(int(x), int(y))] = self.markFactory.get_instance(player)
+                self.group_message(json.dumps({
+                    'x' : x,
+                    'y' : y,
+                    'player' : player,
+                }), "move")
+
+                if not self.check_pattern():
+                    self.a_side = not self.a_side
+                    self.new_round()
+                    return
+                else:
+                    print("pattern is true")
+            else:
+                print("(GAME) error receive move in game: not your move")
+                return
+
+
+    def check_marks(self, a, b, c, id_pattern):
+        if self.board[a].type == self.board[b].type == self.board[c].type:
+            self.group_message(json.dumps({
+                    'winner': self.board[a].type,
+                    'pattern': id_pattern
+                }), "finish")
+            self.end_game(self.board[a].type)
+            return True
+        return False
+
+    def check_pattern(self):
+        result = 0
+        print("elo in check pattern")
+        if (0,0) in self.board:
+            if (1,0) in self.board and (2,0) in self.board:
+                # !|| patern
+                result += self.check_marks((0,0), (1,0), (2,0), 0)
+                    
+            if (0,1) in self.board and (0,2) in self.board:
+                # -.. patern
+                result += self.check_marks((0,0), (0,1), (0,2), 1)
+                    
+            if (1,1) in self.board and (2,2) in self.board:
+                # \ patern
+                result += self.check_marks((0,0), (1,1), (2,2), 2)
+                    
+        if (1,1) in self.board:
+            if (0,1) in self.board and (2,1) in self.board:
+                # |!| patern
+                result += self.check_marks((1,1), (0,1), (2,1), 3)
+                    
+            if (1,0) in self.board and (1,2) in self.board:
+                # .-. patern
+                result += self.check_marks((1,1), (1,0), (1,2), 4)
+                    
+            if (2,0) in self.board and (0,2) in self.board:
+                # / patern
+                result += self.check_marks((1,1), (2,0), (0,2), 5)
+                    
+        if (2,2) in self.board:
+            if (0,2) in self.board and (1,2) in self.board:
+                # ||! patern
+                result += self.check_marks((2,2), (0,2), (1,2), 6)
+                    
+            if (2,0) in self.board and (2,1) in self.board:
+                #  ..- patern
+                result += self.check_marks((2,2), (2,0), (2,1), 7)
+        if result > 0:
+            return True 
+        else:
+            if len(self.board) == 9:
+                self.group_message(json.dumps({
+                        'draw': 1
+                    }), "finish")
+                self.end_game('draw')
+                return True
+        
+        return False
 
 
     def create_game_model(self, match_model):
@@ -179,7 +250,10 @@ class Game:
         self.group_message("Game is on! Player " + player + " is your move", "log")
 
     def end_game(self, result):
-        self.is_finished = False
+        self.is_finished = True
+        res = 0 if result == "draw" else 1 if result == "A" else 2
+        self.game_model.result = res
+        self.game_model.save()
         self.match.finish_game(result)
 
     def group_message(self, text, content_type):
