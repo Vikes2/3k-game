@@ -32,7 +32,6 @@ class GameConsumer(WebsocketConsumer):
         }))
 
         self.game_manager = GameManager()
-        user = self.scope['user']
         self.game_manager.connect_player(self)
         print(self.game_manager.queue.print_content())
         # self.game_name = self.scope['user']
@@ -55,7 +54,10 @@ class GameConsumer(WebsocketConsumer):
         message = text_data_json['message']
         x = text_data_json['x']
         y = text_data_json['y']
-        print("hello from socket receive ", message, x)
+
+        if self._match != None:
+            self._match.receive_message(text_data, self)
+
 
     def group_message(self, text, content_type):
 

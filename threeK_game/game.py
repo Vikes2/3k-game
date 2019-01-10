@@ -1,5 +1,6 @@
 import abc
 import random
+import json
 from .models import Match as mMatch, Profile
 
 class QueueI(abc.ABC):
@@ -58,6 +59,8 @@ class GameManager(object):
         player_b = self.queue.pop()
         new_match= Match(player_a, player_b)
         print("match created")
+        player_a._match = new_match
+        player_b._match = new_match
         new_match.attach(player_a)
         new_match.attach(player_b)
         new_match.match_start = new_match.match_id
@@ -72,6 +75,17 @@ class Match:
         self.create_match_model(username_a.scope['user'].username, username_b.scope['user'].username)
         self.game_list = []
         self.is_end_match = False
+
+    def receive_message(self, text_data, consumer):
+        if self.player_a == consumer:
+            sender_is_a = True
+        elif self.player_b == consumer:
+            sender_is_a = False
+        else:
+            sender_is_a = None
+            print("bugg - receive_message in match")
+        
+        self.game_list[-1].receive_move(text_data, sender_is_a)
 
     def run_games(self):
         #the first win
@@ -125,13 +139,42 @@ class Game:
         self.match = match
         self.create_game_model(match.match_model)
         self.a_side = (random.random() > 0.5)
-        self.group_message("Gra została utworzona", "log")
-        self.run_game()
+        self.group_message("New game", "log")
+        self.markFactory = FlyweightFactory(Mark)
+        
+        self.group_message("clear", "log")
+        self.new_round()
+
+    def receive_move(self, text_data, sender):
+        player = "A" if self.a_side else "B"
+        text_data_json = json.loads(text_data)
+        x = text_data_json['x']
+        y = text_data_json['y']
+        if self.a_side == sender:
+            #correct (a_move)
+            print("(GAME)player " + player + " make a move :" + x + " " + y)
+            if (x, y) in self.board:
+                print("(GAME) error receive move in game: mark already exists")
+                return
+            self.board[(x, y)] = self.markFactory.get_instance(player)
+            self.group_message(json.dumps({
+                'x' : x,
+                'y' : y,
+                'player' : player,
+            }), "move")
+            
+        else:
+            print("(GAME) error receive move in game")
+            return
+
+        self.a_side = not self.a_side
+        self.new_round()
+
 
     def create_game_model(self, match_model):
         self.game_model = match_model.game_set.create()
 
-    def run_game(self):
+    def new_round(self):
         player = "A" if self.a_side else "B"
         self.group_message("Game is on! Player " + player + " is your move", "log")
 
@@ -140,7 +183,6 @@ class Game:
         self.match.finish_game(result)
 
     def group_message(self, text, content_type):
-        print("\nmaking_group_message\n")
         self.match.player_a.group_message(text, content_type)
 
 class FlyweightFactory(object):
@@ -160,7 +202,7 @@ class Mark(object):
     def __init__(self, type):
         self.type = type
 
-# SharpFactory = FlyweightFactory(Sharp)
+# MarkFactory = FlyweightFactory(Mark)
 # CircleFactory = FlyweightFactory(Circle)
 
 # SharpFactory.get_instance()
