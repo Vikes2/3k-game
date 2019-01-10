@@ -46,7 +46,6 @@ class GameManager(object):
             cls.active_matches = []    
         return GameManager.__instance
 
-
     def connect_player(self, consumer):
         #user = consumer.scope['user'].username
         self.queue.push(consumer)

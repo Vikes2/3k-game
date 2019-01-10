@@ -11,7 +11,9 @@
     </div>
     <div class="row">
         <div class="col">
-            <button id="play-button" class="btn btn-success">Play</button>
+            <div class="main-content">
+                <button id="play-button" class="btn btn-success">Play</button>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -35,14 +37,9 @@
 {% block javascripts %}
 {{ block.super }}
 <script>
-
     let gameSocket;
 
-    $(document).on('click', '#play-button', () =>{
-        alert("Dołączono do Q");
-        initSocket();
-    });    
-
+    $(document).on('click', '#play-button', initSocket);
 
     $(document).on('click', '.test-button', () =>{
         gameSocket.send(JSON.stringify({
@@ -65,12 +62,17 @@
         gameSocket.onmessage = function(e){
             let data = JSON.parse(e.data);
             console.log(data);
+
+            switch(data.type) {
+                case 'connect':
+                    $('.main-content').html('<div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>');
+                    $('.main-content').append('<p>Trwa oczekiwanie na przeciwnika...</p>');
+                    break;
+                case 'created_game':
+                    $('.main-content').load('/game');
+                    break;
+            }
         }
     }
-
-    
-
-
-
 </script>
 {% endblock %}
