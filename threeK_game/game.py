@@ -109,11 +109,18 @@ class Match:
             self.run_games()
             #end match
         else:
-            self.is_end_match = True
             self.end_match()
 
     def end_match(self):
+        self.is_end_match = True
         print("end match")
+
+    def disconnect(self,consumer):
+        if self.is_end_match != True:
+            if len(self.game_list) > 0:
+                player = "A" if consumer == self.player_a else "B"
+                self.game_list[-1].player_dc(player)    
+            self.end_match()
 
 
     def create_match_model(self, username_a, username_b):
@@ -155,6 +162,7 @@ class Game:
         self.a_side = (random.random() > 0.5)
         self.group_message("New game", "log")
         self.markFactory = FlyweightFactory(Mark)
+        self.gameHistory = GameHistory()
         
         self.group_message("clear", "log")
         # self.group_message("clear", "new_game")
@@ -163,6 +171,12 @@ class Game:
             'starts': 'A' if self.a_side else 'B',
         }), 'new_game')
         self.new_round()
+
+    def player_dc(self, player):
+        self.group_message(json.dumps({
+                        'dc': 1
+                    }), "finish")
+        self.end_game(player)
 
     def receive_move(self, text_data, sender):
         text_data_json = json.loads(text_data)
@@ -179,6 +193,8 @@ class Game:
                     print("(GAME) error receive move in game: mark already exists")
                     return
                 self.board[(int(x), int(y))] = self.markFactory.get_instance(player)
+                move_command = MoveCommand(x, y, player)
+                self.gameHistory.add(move_command)
                 self.group_message(json.dumps({
                     'x' : x,
                     'y' : y,
@@ -268,11 +284,36 @@ class Game:
         self.is_finished = True
         res = 0 if result == "draw" else 1 if result == "A" else 2
         self.game_model.result = res
+        moves = json.dumps(self.gameHistory.get_history())
+        self.game_model.moves = moves
         self.game_model.save()
         self.match.finish_game(result)
 
     def group_message(self, text, content_type):
         self.match.player_a.group_message(text, content_type)
+
+
+class GameHistory:
+    def __init__(self):
+        self.commands = []
+    def add(self, command):
+        self.commands.append(command)
+    def get_history(self):
+        move_list = []
+        for c in self.commands:
+            move_list.append(c.execute())
+        return move_list
+
+class Command:
+    def execute(self): pass
+
+class MoveCommand(Command):
+    def __init__(self, x, y, player):
+        self.x = x
+        self.y = y
+        self.player = player    
+    def execute(self):
+        return { 'type': 'move', 'x': self.x, 'y': self.y, 'player': self.player}
 
 class FlyweightFactory(object):
     def __init__(self, cls):
@@ -291,7 +332,5 @@ class Mark(object):
     def __init__(self, type):
         self.type = type
 
-# MarkFactory = FlyweightFactory(Mark)
-# CircleFactory = FlyweightFactory(Circle)
 
-# SharpFactory.get_instance()
+

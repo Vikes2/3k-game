@@ -48,7 +48,13 @@ class GameConsumer(WebsocketConsumer):
 
 
     def disconnect(self, close_code):
-        pass
+        if self._match != None:
+            if self._match.is_end_match != True:
+                # user dc during game
+                self._match.disconnect(self)
+        else:
+            #user dc during queue
+
 
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
