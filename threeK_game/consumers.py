@@ -26,9 +26,10 @@ class GameConsumer(WebsocketConsumer):
         self._match = None
         self._match_start = False
         self.accept()
-
+        
         self.send(text_data=json.dumps({
-            'message': "polaczono ;)"
+            'content_type': 'connect',
+            'message': "connected successfully"
         }))
 
         self.game_manager = GameManager()
@@ -72,6 +73,23 @@ class GameConsumer(WebsocketConsumer):
                     'message': text,
                 }
             )
+
+    def notify_about_start(self, match_id):
+        async_to_sync(self.channel_layer.group_send)(
+            self.game_group_name,
+            {
+                'type': 'create_match_message',
+                'message': match_id
+            }
+        )
+
+    def create_match_message(self, event):
+        message = event['message']
+
+        self.send(text_data=json.dumps({
+            'type': 'created_game',
+            'match_id': message
+        }))
 
     def game_message(self, event):
         message = event['message']

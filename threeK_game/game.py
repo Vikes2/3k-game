@@ -46,7 +46,6 @@ class GameManager(object):
             cls.active_matches = []    
         return GameManager.__instance
 
-
     def connect_player(self, consumer):
         #user = consumer.scope['user'].username
         self.queue.push(consumer)
@@ -75,6 +74,16 @@ class Match:
         self.create_match_model(username_a.scope['user'].username, username_b.scope['user'].username)
         self.game_list = []
         self.is_end_match = False
+
+        self.player_a.send(text_data=json.dumps({
+            'content_type': "player",
+            'message': 'A'
+        }))
+
+        self.player_b.send(text_data=json.dumps({
+            'content_type': "player",
+            'message': 'B'
+        }))
 
     def receive_message(self, text_data, consumer):
         if self.player_a == consumer:
@@ -148,6 +157,11 @@ class Game:
         self.markFactory = FlyweightFactory(Mark)
         
         self.group_message("clear", "log")
+        # self.group_message("clear", "new_game")
+        
+        self.group_message(json.dumps({
+            'starts': 'A' if self.a_side else 'B',
+        }), 'new_game')
         self.new_round()
 
     def receive_move(self, text_data, sender):
@@ -160,7 +174,7 @@ class Game:
             y = text_data_json['y']
             if self.a_side == sender:
                 #correct
-                print("(GAME)player " + player + " make a move :" + x + " " + y)
+                print("(GAME)player " + player + " make a move :" + str(x) + " " + str(y))
                 if (x, y) in self.board:
                     print("(GAME) error receive move in game: mark already exists")
                     return
@@ -248,6 +262,7 @@ class Game:
     def new_round(self):
         player = "A" if self.a_side else "B"
         self.group_message("Game is on! Player " + player + " is your move", "log")
+        self.group_message(player, "turn")
 
     def end_game(self, result):
         self.is_finished = True
