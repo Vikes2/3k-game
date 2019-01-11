@@ -27,13 +27,8 @@ class GameConsumer(WebsocketConsumer):
         self._match_start = False
         self.accept()
         
-        self.game_manager = GameManager()
-        user = self.scope['user']
-        self.game_manager.connect_player(self)
-        print(self.game_manager.queue.print_content())
-
         self.send(text_data=json.dumps({
-            'type': 'connect',
+            'content_type': 'connect',
             'message': "connected successfully"
         }))
 

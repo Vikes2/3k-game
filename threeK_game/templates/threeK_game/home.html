@@ -16,7 +16,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <!-- <div class="row">
         <div class="col">
             <input type="text" class="test-x-input" >x</input>
         </div>
@@ -28,8 +28,7 @@
         <div class="col">
             <button class="test-button btn btn-success">send</button>
         </div>
-    </div>
-
+    </div> -->
 </div>
 
 {% endblock %}
@@ -38,6 +37,8 @@
 {{ block.super }}
 <script>
     let gameSocket;
+    let figure;
+    let yourTurn;
 
     $(document).on('click', '#play-button', initSocket);
 
@@ -54,6 +55,17 @@
 
     }); 
 
+    function resetBoard() {
+        let board = $('#game-prototype').clone();
+        $('.game').append(board);
+
+        if(figure == 'A') {
+            $('.figure').html('Grasz kółkiem');
+        } else {
+            $('.figure').html('Grasz krzyżykiem');
+        }
+
+    }
 
     function initSocket(){
         gameSocket = new WebSocket(
@@ -62,17 +74,73 @@
         gameSocket.onmessage = function(e){
             let data = JSON.parse(e.data);
             console.log(data);
-
-            switch(data.type) {
+            yourTurn = false;
+            switch(data.content_type) {
                 case 'connect':
                     $('.main-content').html('<div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>');
                     $('.main-content').append('<p>Trwa oczekiwanie na przeciwnika...</p>');
                     break;
-                case 'created_game':
-                    $('.main-content').load('/game');
+                case 'new_game':
+                    let game = JSON.parse(data.message);
+                    $('.main-content').load('/game', () => {
+                        resetBoard();
+                        if (game.starts == figure) {
+                            $('.turn').html("Teraz Twój ruch");
+                            yourTurn = true;
+                        } else {
+                            $('.turn').html("Teraz ruch przeciwnika");
+                        }
+                    });
                     break;
+                case 'move':
+                    let field = JSON.parse(data.message);
+                    let nought = $('#nought-prototype').clone();
+                    let cross = $('#cross-prototype').clone();
+                    
+                    if (field.player == 'A') {
+                        $('.field[data-x="' + field.x + '"][data-y="'+field.y+'"]').html(nought);
+                    } else {
+                        $('.field[data-x="' + field.x + '"][data-y="'+field.y+'"]').html(cross);                        
+                    }
+                    break;
+                case 'player':
+                    figure = data.message;
+                    break;
+                case 'turn':
+                    let turn = data.message;
+                    
+                    if(turn == figure) {
+                        $('.turn').html("Teraz Twój ruch");
+                        yourTurn = true;
+                    } else {
+                        $('.turn').html("Ruch przeciwnika");
+                    }
+                // case 'created_game':
+                //     $('.main-content').load('/game');
+                //     break;
             }
         }
     }
+
+     $(document).on('click', '.field:empty', (event) =>{
+        const field = {
+            x: $(event.currentTarget).data('x'),
+            y: $(event.currentTarget).data('y')
+        };
+
+        if(yourTurn) {
+            gameSocket.send(JSON.stringify({
+                message: "move",
+                x: field.x,
+                y: field.y
+            }));
+        }
+
+
+        //console.log($('.test-x-input').val())
+        //Console.Log($('test-y-input').value)
+
+
+    }); 
 </script>
 {% endblock %}

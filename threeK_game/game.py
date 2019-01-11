@@ -75,6 +75,16 @@ class Match:
         self.game_list = []
         self.is_end_match = False
 
+        self.player_a.send(text_data=json.dumps({
+            'content_type': "player",
+            'message': 'A'
+        }))
+
+        self.player_b.send(text_data=json.dumps({
+            'content_type': "player",
+            'message': 'B'
+        }))
+
     def receive_message(self, text_data, consumer):
         if self.player_a == consumer:
             sender_is_a = True
@@ -142,6 +152,11 @@ class Game:
         self.markFactory = FlyweightFactory(Mark)
         
         self.group_message("clear", "log")
+        # self.group_message("clear", "new_game")
+        
+        self.group_message(json.dumps({
+            'starts': 'A' if self.a_side else 'B',
+        }), 'new_game')
         self.new_round()
 
     def receive_move(self, text_data, sender):
@@ -151,7 +166,7 @@ class Game:
         y = text_data_json['y']
         if self.a_side == sender:
             #correct (a_move)
-            print("(GAME)player " + player + " make a move :" + x + " " + y)
+            print("(GAME)player " + player + " make a move :" + str(x) + " " + str(y))
             if (x, y) in self.board:
                 print("(GAME) error receive move in game: mark already exists")
                 return
@@ -176,6 +191,7 @@ class Game:
     def new_round(self):
         player = "A" if self.a_side else "B"
         self.group_message("Game is on! Player " + player + " is your move", "log")
+        self.group_message(player, "turn")
 
     def end_game(self, result):
         self.is_finished = False

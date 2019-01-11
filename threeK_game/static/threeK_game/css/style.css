@@ -15,12 +15,15 @@ body{
 }
 
 .field {
-    cursor: pointer;
     width: 160px;
     height: 160px;
     padding: 20px;
     border-top: solid 1px black;
     border-left: solid 1px black;
+}
+
+.field:empty {
+  cursor: pointer;
 }
 
 .field img {
