@@ -1,5 +1,47 @@
+*{
+  box-sizing: border-box;
+}
 body{
-    background: #808080;
+    background: #3b5c3f;
+}
+
+main{
+  margin-top: 20em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+}
+
+.sign-buttons-container{
+  overflow: auto;
+  position: absolute;
+  background-color:#efefef;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 300px;
+  z-index: 10;
+  -webkit-box-shadow: 0px 13px 43px 2px rgba(0,0,0,0.75);
+-moz-box-shadow: 0px 13px 43px 2px rgba(0,0,0,0.75);
+box-shadow: 0px 13px 43px 2px rgba(0,0,0,0.75);
+}
+
+.btn-orange{
+  background-color: #C4970A;
+  padding: 7px 30px;
+
+}
+
+.btn-orange:hover{
+  background-color: #826407;
+  
+}
+
+.logo-pic{
+  width: 50px;
+  height: auto;
 }
 
 .fields {

@@ -54,6 +54,7 @@ class GameConsumer(WebsocketConsumer):
                 self._match.disconnect(self)
         else:
             #user dc during queue
+            pass
 
 
     def receive(self, text_data):

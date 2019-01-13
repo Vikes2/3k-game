@@ -1,12 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1> Index </h1>
-
-<div class="sign-buttons-container">
-    <a class="btn btn-secondary" href="{% url 'three_k:login' %}">Login</a>
-    <a class="btn btn-secondary" href="{% url 'three_k:signup' %}">SignUp</a>
-</div>
+<main>
+<section class="sign-buttons-container">
+        <h1><img src="../../static/threeK_game/images/tic-tac-toe.svg" class="logo-pic" alt="logo"> 3K GAME</h1>
+        <h3>Kółko krzyżyk kura</h3>
+        <p>Nowa gra przeglądarkowa. Zagraj w kółko i krzyżyk <b>online</b>!</p>
+        <nav>
+            <a class="btn btn-secondary btn-orange" href="{% url 'three_k:login' %}">Zaloguj się</a>
+            <a class="btn btn-secondary btn-orange" href="{% url 'three_k:signup' %}">Zarejestruj się</a>
+        </nav>
+</section>
+</main>
 
 
 {% endblock %}
