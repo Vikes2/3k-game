@@ -1,0 +1,52 @@
+.fields {
+    display: flex;
+}
+
+/* .fields > .field:first-child {
+    border-left: none;
+}
+
+.game > .container > .row:first-child .field {
+    border-top: none;
+} */
+
+.field {
+    width: 160px;
+    height: 160px;
+    padding: 20px;
+    /* border-top: solid 1px black;
+    border-left: solid 1px black; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.field:empty {
+  cursor: pointer;
+}
+
+.field img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+  table td {
+    padding: 1rem;
+    border: 3px solid black; 
+  }
+  table tr:first-child td {
+    border-top: 0;
+  }
+  table tr td:first-child {
+    border-left: 0;
+  }
+  table tr td:last-child {
+    border-right: 0;
+  }
+  table tr:last-child td {
+    border-bottom: 0;
+  }

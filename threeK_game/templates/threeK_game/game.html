@@ -1,31 +1,31 @@
 {% load static %}
 <div style="display: none">
-    <img id="cross-prototype" src="{% static 'threeK_game/images/x.png' %}" alt="cross" />
-    <img id="nought-prototype" src="{% static 'threeK_game/images/o.png' %}" alt="nought" />
+    <img id="cross-prototype" src="{% static 'threeK_game/images/x.svg' %}" alt="cross" />
+    <img id="nought-prototype" src="{% static 'threeK_game/images/o.svg' %}" alt="nought" />
     <div id="game-prototype">
-        <div class="container">
-            <div class="row">
+        <table class="container">
+            <tr class="row">
                 <div class="col-auto fields">
-                    <div class="field" data-x="0" data-y="0"></div>
-                    <div class="field" data-x="1" data-y="0"></div>
-                    <div class="field" data-x="2" data-y="0"></div>
+                    <td class="field" data-x="0" data-y="0"></td>
+                    <td class="field" data-x="1" data-y="0"></td>
+                    <td class="field" data-x="2" data-y="0"></td>
                 </div>
             </div>
-            <div class="row">
+            <tr class="row">
                 <div class="col-auto fields">
-                    <div class="field" data-x="0" data-y="1"></div>
-                    <div class="field" data-x="1" data-y="1"></div>
-                    <div class="field" data-x="2" data-y="1"></div>
+                    <td class="field" data-x="0" data-y="1"></td>
+                    <td class="field" data-x="1" data-y="1"></td>
+                    <td class="field" data-x="2" data-y="1"></td>
                 </div>
             </div>
-            <div class="row">
+            <tr class="row">
                 <div class="col-auto fields">
-                    <div class="field" data-x="0" data-y="2"></div>
-                    <div class="field" data-x="1" data-y="2"></div>
-                    <div class="field" data-x="2" data-y="2"></div>
+                    <td class="field" data-x="0" data-y="2"></td>
+                    <td class="field" data-x="1" data-y="2"></td>
+                    <td class="field" data-x="2" data-y="2"></td>
                 </div>
             </div>
-        </div>
+        </table>
     </div>
 </div>
 <p class="figure"></p>

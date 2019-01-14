@@ -56,9 +56,9 @@
         $('.game').append(board);
 
         if(figure == 'A') {
-            $('.figure').html('Grasz kółkiem');
+            $('.figure').html('Grasz <b>kółkiem</b>.');
         } else {
-            $('.figure').html('Grasz krzyżykiem');
+            $('.figure').html('Grasz <b>krzyżykiem</b>.');
         }
 
     }
@@ -73,7 +73,7 @@
             yourTurn = false;
             switch(data.content_type) {
                 case 'connect':
-                    $('.main-content-container').html('<div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>');
+                    $('.main-content-container').html('<div class="loader">  <div class="square" ></div>  <div class="square"></div>  <div class="square last"></div>  <div class="square clear"></div>  <div class="square"></div>  <div class="square last"></div>  <div class="square clear"></div>  <div class="square "></div>  <div class="square last"></div></div>');
                     $('.main-content-container').append('<p>Trwa oczekiwanie na przeciwnika...</p>');
                     break;
                 case 'new_game':
@@ -106,10 +106,10 @@
                     let turn = data.message;
                     
                     if(turn == figure) {
-                        $('.turn').html("Teraz Twój ruch");
+                        $('.turn').html("Teraz Twój ruch.");
                         yourTurn = true;
                     } else {
-                        $('.turn').html("Ruch przeciwnika");
+                        $('.turn').html("Ruch przeciwnika.");
                     }
                 // case 'created_game':
                 //     $('.main-content').load('/game');
