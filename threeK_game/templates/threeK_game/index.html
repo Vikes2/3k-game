@@ -2,16 +2,16 @@
 {% block content %}
 
 <main>
-<section class="sign-buttons-container">
-        <h1><img src="../../static/threeK_game/images/tic-tac-toe.svg" class="logo-pic" alt="logo"> 3K GAME</h1>
-        <h3>Kółko krzyżyk kura</h3>
-        <p>Nowa gra przeglądarkowa. Zagraj w kółko i krzyżyk <b>online</b>!</p>
-        <nav>
-            <a class="btn btn-secondary btn-orange" href="{% url 'three_k:login' %}">Zaloguj się</a>
-            <a class="btn btn-secondary btn-orange" href="{% url 'three_k:signup' %}">Zarejestruj się</a>
-        </nav>
-</section>
+    <section class="main-content-container">
+            <h1><img src="../../static/threeK_game/images/tic-tac-toe.svg" class="logo-pic" alt="logo"> 3K GAME</h1>
+            <h3>Kółko krzyżyk kompromitacja</h3>
+            <p>Nowa gra przeglądarkowa. Zagraj w kółko i krzyżyk <b>online</b>!</p>
+                <a class="btn btn-secondary btn-orange" href="{% url 'three_k:login' %}">Zaloguj się</a>
+                <nav>
+                    <a>Nie masz konta? </a>
+                    <a href="{% url 'three_k:signup' %}">Zarejestruj się!</a>
+                </nav>
+    </section>
 </main>
-
 
 {% endblock %}

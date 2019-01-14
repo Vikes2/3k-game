@@ -2,20 +2,16 @@
 {% block content %}
 
 
+<main>
+    <section class="main-content-container">
+            <h1><img src="../../static/threeK_game/images/tic-tac-toe.svg" class="logo-pic" alt="logo"> 3K GAME</h1>
+            <h3>Kółko krzyżyk kompromitacja</h3>
+            <p>Nowa gra przeglądarkowa. Zagraj w kółko i krzyżyk <b>online</b>!</p>
+            <button id="play-button" class="btn btn-secondary btn-orange">Graj</button>
+    </section>
+</main>
 
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <h1> HOME </h1>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <div class="main-content">
-                <button id="play-button" class="btn btn-success">Play</button>
-            </div>
-        </div>
-    </div>
+
     <!-- <div class="row">
         <div class="col">
             <input type="text" class="test-x-input" >x</input>
@@ -77,12 +73,12 @@
             yourTurn = false;
             switch(data.content_type) {
                 case 'connect':
-                    $('.main-content').html('<div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>');
-                    $('.main-content').append('<p>Trwa oczekiwanie na przeciwnika...</p>');
+                    $('.main-content-container').html('<div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>');
+                    $('.main-content-container').append('<p>Trwa oczekiwanie na przeciwnika...</p>');
                     break;
                 case 'new_game':
                     let game = JSON.parse(data.message);
-                    $('.main-content').load('/game', () => {
+                    $('.main-content-container').load('/game', () => {
                         resetBoard();
                         if (game.starts == figure) {
                             $('.turn').html("Teraz Twój ruch");
