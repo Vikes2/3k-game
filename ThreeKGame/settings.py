@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
     'threeK_game',
     'channels',
 ]
@@ -132,3 +133,5 @@ CHANNEL_LAYERS={
         }, 
     }
 } 
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'

@@ -1,12 +1,23 @@
 {% extends 'base.html' %}
-
-{% block title %}Login{% endblock %}
-
+{% load crispy_forms_tags %}
 {% block content %}
-  <h2>Login</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-  </form>
+
+  <h2>Logowanie</h2>
+  {% if form.errors %}
+    <div class="alert alert-danger">
+      Nazwa użytkownika i hasło nie pasują. Spróbuj ponownie.
+    </div>
+  {% endif %}
+
+<form method="post">
+  {% csrf_token %}
+  <div class="form-group">
+      {{ form.username|as_crispy_field }}
+  </div>
+  <div class="form-group">
+      {{ form.password|as_crispy_field }}
+  </div>
+  <input type="submit" value="Zaloguj się" class="btn btn-primary">
+</form>
+
 {% endblock %}
