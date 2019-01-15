@@ -13,8 +13,10 @@ main{
   overflow: auto;
 }
 
-nav{
+.form-all{
   display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .main-content-container{
@@ -49,8 +51,12 @@ nav{
   height: auto;
 }
 
-.login-form{
+.auth-form{
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+h2{
+  margin-bottom: 30px;
 }
