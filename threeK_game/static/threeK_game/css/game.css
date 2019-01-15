@@ -20,9 +20,27 @@
     max-height: 100%;
 }
 
+.line { 
+  width: 450px;
+  height: 5px;
+  background-color: #000;
+  position: absolute;
+  top: 80px;
+  display: none;
+}
+
+.pop-alert { 
+  position: absolute;
+  top: 330px;
+  right: 300px;
+  font-size: 2em;
+  display: none;
+}
+
 table {
     border-collapse: collapse;
     margin: 0 auto;
+    position: relative;
 }
   table td {
     padding: 1rem;

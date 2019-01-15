@@ -14,6 +14,7 @@
 {% block javascripts %}
 {{ block.super }}
 <script>
+
     let gameSocket;
     let figure;
     let yourTurn;
@@ -93,9 +94,51 @@
                     } else {
                         $('.turn').html("Ruch przeciwnika.");
                     }
-                // case 'created_game':
-                //     $('.main-content').load('/game');
-                //     break;
+                    break;
+                case 'finish':
+                    let unparsedData = JSON.parse(data.message)
+                    console.log("sposób wygranej: " + unparsedData.pattern)
+                    $('.appear').css("display", "flex");
+
+                    
+                    switch(unparsedData.pattern){
+                        case 0:
+                            $('.line').css("right", "360px");
+                            $('.line').css("transform", "rotate(90deg)");
+                            $('.line').css("top", "370px");
+                            break;
+                        case 1:
+                            $('.line').css("top", "210px");
+                            break;
+                        case 2:
+                            $('.line').css("transform", "rotate(45deg)");
+                            $('.line').css("top", "370px");
+                            $('.line').css("right", "120px");
+                            $('.line').css("width", "600px");
+                            break;
+                        case 3:
+                            $('.line').css("transform", "rotate(90deg)");
+                            $('.line').css("top", "370px");
+                            break;
+                        case 4:
+                            $('.line').css("top", "370px");
+                            break;
+                        case 5:
+                            $('.line').css("top", "370px");
+                            $('.line').css("right", "120px");
+                            $('.line').css("width", "600px");
+                            $('.line').css("transform", "rotate(135deg)");
+                            break;
+                        case 6:
+                            $('.line').css("transform", "rotate(90deg)");
+                            $('.line').css("top", "370px");
+                            $('.line').css("right", "40px");
+                            break;
+                        case 7:
+                            $('.line').css("top", "530px");
+                    }
+
+                    // $('.main-content-container').html
             }
         }
     }
