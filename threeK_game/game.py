@@ -167,8 +167,13 @@ class Game:
         self.group_message("clear", "log")
         # self.group_message("clear", "new_game")
         
+        
+        # self.group_message()
+        
         self.group_message(json.dumps({
             'starts': 'A' if self.a_side else 'B',
+            'A': self.match.player_a.scope['user'].username,
+            'B': self.match.player_b.scope['user'].username,
         }), 'new_game')
         self.new_round()
 
