@@ -3,6 +3,7 @@ import random
 import json
 from .models import Match as mMatch, Profile
 
+#interface kolejki FIFO
 class QueueI(abc.ABC):
     @abc.abstractmethod
     def len(self):
@@ -17,6 +18,8 @@ class QueueI(abc.ABC):
     def is_empty(self):
         pass
 
+# klasa kolejki przechowywująca graczy, implementuje interface QueueI
+# gracz - obiekt webSocket
 class Queue(QueueI):
     def __init__(self, container):
         self.players = container
@@ -37,6 +40,9 @@ class Queue(QueueI):
         # return tuple(self.players)
         return self.players
 
+#singleton game manager - zarządzanie meczami
+# connect_player(consumer) - metoda dołącza użytkownika do kolejki oczekujących
+# create_new_game() - metoda tworzy nowy mecz usuwając graczy z kolejki oczekujących
 class GameManager(object):
     __instance = None
     def __new__(cls):
@@ -65,6 +71,11 @@ class GameManager(object):
         new_match.match_start = new_match.match_id
         print(new_match.match_id)
         self.active_matches.append(new_match)
+
+
+# Match - klasa meczu
+# wykorzystany wzorzec obserwator - gdy mecz zostanie zainicjowany, gracze zostają o tym poinformowani
+# klasa łączy się z bazą oraz aktualizuje postepy meczu
 
 class Match:
     def __init__(self, username_a, username_b):
@@ -153,6 +164,11 @@ class Match:
         self._notify()
         self.run_games()
 
+
+# klasa Game - zawiera pojedynczą instancję gry
+# receive_move - odbiera posuniecia graczy
+# check pattern - sprawdza stan gry
+# zawiera gameHistory - wzorzec Command
 class Game:
     def __init__(self, match):
         self.board = dict()
@@ -298,6 +314,8 @@ class Game:
         self.match.player_a.group_message(text, content_type)
 
 
+# klasa GameHistory - klasa przechowywująca ruchy graczy
+# self.commands - tablica obiektow MoveCommand
 class GameHistory:
     def __init__(self):
         self.commands = []
@@ -309,9 +327,13 @@ class GameHistory:
             move_list.append(c.execute())
         return move_list
 
+#interface Command
 class Command:
     def execute(self): pass
 
+# MoveCommand - wzorzec Command
+# Polecenie zawiera pozycje oraz gracza króry wykonał ruch
+# metoda execute - zwraca zapisywalną forme ruchu
 class MoveCommand(Command):
     def __init__(self, x, y, player):
         self.x = x
@@ -320,7 +342,12 @@ class MoveCommand(Command):
     def execute(self):
         return { 'type': 'move', 'x': self.x, 'y': self.y, 'player': self.player}
 
+
+# Tworzy i zarządza obiektami Pyłka
+# Kiedy klient zapyta o obiekt(pyłek),
+#                   FlyweightFactory dostarcza istniejącą instancję lub tworzy nową, jeżeli nie istnieje.
 class FlyweightFactory(object):
+
     def __init__(self, cls):
         self._cls = cls
         self._instances = dict()
@@ -333,6 +360,8 @@ class FlyweightFactory(object):
 
 
 #----------------------------------------------------------
+# Objekt Mark - obiekt "pionka" w grze
+# odpowiada kółkowi lub krzyżykowi
 class Mark(object):
     def __init__(self, type):
         self.type = type

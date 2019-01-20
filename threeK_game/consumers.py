@@ -4,13 +4,11 @@ from .game import *
 import json
 
 queue = []
-
+# Klasa Websocketu łącząca użytkowników w grupy do komunikacji w grze
 class GameConsumer(WebsocketConsumer):
 
-
-
+    # tworzy konkretna grupe( wywoływana z serwera)
     def update(self, arg):
-        # tu trza connect to grupa konkretna z param from Match in Game
         self._match_start = arg
         self.game_group_name = 'game_' + str(arg)
         async_to_sync(self.channel_layer.group_add)(
@@ -18,9 +16,8 @@ class GameConsumer(WebsocketConsumer):
             self.channel_name
         )
         self.is_in_group = True
-        #self.group_message("elo w grupie")
 
-
+    # Podczas połączenia gracz jest łaczony z kolejką
     def connect(self):
         self.is_in_group = False
         self._match = None
@@ -34,19 +31,8 @@ class GameConsumer(WebsocketConsumer):
 
         self.game_manager = GameManager()
         self.game_manager.connect_player(self)
-        print(self.game_manager.queue.print_content())
-        # self.game_name = self.scope['user']
-        # self.game_group_name = 'game_1'
 
-        # print(self.game_name)
-
-        # async_to_sync(self.channel_layer.group_add)(
-        #     self.game_group_name,
-        #     self.channel_name
-        # )
-
-
-
+    # podczas dc informowana jast gra o zdarzeniu
     def disconnect(self, close_code):
         if self._match != None:
             if self._match.is_end_match != True:
@@ -56,7 +42,7 @@ class GameConsumer(WebsocketConsumer):
             #user dc during queue
             pass
 
-
+    #przekazanie wiadomości do serwera
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
@@ -66,7 +52,7 @@ class GameConsumer(WebsocketConsumer):
         if self._match != None:
             self._match.receive_message(text_data, self)
 
-
+    # wysłanie wiadomośco grupowej
     def group_message(self, text, content_type):
 
         if self.is_in_group == False:
@@ -89,7 +75,7 @@ class GameConsumer(WebsocketConsumer):
                 'message': match_id
             }
         )
-
+    
     def create_match_message(self, event):
         message = event['message']
 
