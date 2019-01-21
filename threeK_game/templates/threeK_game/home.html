@@ -97,12 +97,25 @@
                     }
                     break;
                 case 'finish':
-                    let unparsedData = JSON.parse(data.message)
-                    console.log("sposób wygranej: " + unparsedData.pattern)
+                    let parsedData = JSON.parse(data.message)
+                    
+                    if(parsedData.dc) {
+                        $('.pop-alert').html('Wygrałeś walkoverem!');
+                        $('.pop-alert').css('display', 'flex');
+                        break;
+                    }
+
+                    console.log(parsedData)
                     $('.appear').css("display", "flex");
 
+                    if (parsedData.winner == figure) {
+                        $('.pop-alert').html("Wygrałeś!");
+                    } else {
+                        $('.pop-alert').html("Przegrałeś!");
+                    }
+
                     
-                    switch(unparsedData.pattern){
+                    switch(parsedData.pattern){
                         case 0:
                             $('.line').css("right", "360px");
                             $('.line').css("transform", "rotate(90deg)");
@@ -157,11 +170,6 @@
                 y: field.y
             }));
         }
-
-
-        //console.log($('.test-x-input').val())
-        //Console.Log($('test-y-input').value)
-
 
     }); 
 </script>

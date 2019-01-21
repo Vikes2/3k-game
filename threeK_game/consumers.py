@@ -40,6 +40,7 @@ class GameConsumer(WebsocketConsumer):
                 self._match.disconnect(self)
         else:
             #user dc during queue
+            self.game_manager.remove_from_queue(self)
             pass
 
     #przekazanie wiadomości do serwera

@@ -17,6 +17,9 @@ class QueueI(abc.ABC):
     @abc.abstractmethod
     def is_empty(self):
         pass
+    @abc.abstractmethod
+    def remove(self, object):
+        pass
 
 # klasa kolejki przechowywująca graczy, implementuje interface QueueI
 # gracz - obiekt webSocket
@@ -35,6 +38,9 @@ class Queue(QueueI):
 
     def is_empty(self):
         return (self.len() == 0)
+
+    def remove(self, player):
+        self.players.remove(player)
 
     def print_content(self):
         # return tuple(self.players)
@@ -58,6 +64,9 @@ class GameManager(object):
         print(self.queue.len(), end="============================ len queue\n")
         if self.queue.len() > 1:
             self.create_new_game()
+
+    def remove_from_queue(self, consumer):
+        self.queue.remove(consumer)
     
     def create_new_game(self):
         player_a = self.queue.pop()
