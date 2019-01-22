@@ -1,13 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 <h1>
     <img src="../../static/threeK_game/images/tic-tac-toe.svg" class="logo-pic" alt="logo">
-     Profil {{profile.user}}
+     Ostatnie gry
 </h1>
-<h3>Liczba wygranych: {{won}}</h3>
-<h3>Liczba przegranych: {{lost}}</h3>
-<h3>Historia gier:</h3>
 {% if games %}
 <table>
     <thead>

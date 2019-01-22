@@ -6,11 +6,12 @@ body{
 }
 
 main{
-  margin-top: 20em;
+  /* margin-top: 20em; */
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: auto;
+  min-height: 100vh;
 }
 
 .form-all{
@@ -21,7 +22,7 @@ main{
 
 .main-content-container{
   overflow: auto;
-  position: absolute;
+  /* position: absolute; */
   background-color:#efefef;
   display: flex;
   flex-direction: column;

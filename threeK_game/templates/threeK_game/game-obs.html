@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div style="display: none">
+    <img id="cross-prototype" src="{% static 'threeK_game/images/x.svg' %}" alt="cross" />
+    <img id="nought-prototype" src="{% static 'threeK_game/images/o.svg' %}" alt="nought" />
+    <div id="game-prototype">
+        <table class="container">
+            <tr class="row">
+                <div class="col-auto fields">
+                    <td class="field" data-x="0" data-y="0"></td>
+                    <td class="field" data-x="0" data-y="1"></td>
+                    <td class="field" data-x="0" data-y="2"></td>
+                </div>
+            </div>
+            <tr class="row">
+                <div class="col-auto fields">
+                    <td class="field" data-x="1" data-y="0"></td>
+                    <td class="field" data-x="1" data-y="1"></td>
+                    <td class="field" data-x="1" data-y="2"></td>
+                </div>
+            </div>
+            <tr class="row">
+                <div class="col-auto fields">
+                    <td class="field" data-x="2" data-y="0"></td>
+                    <td class="field" data-x="2" data-y="1"></td>
+                    <td class="field" data-x="2" data-y="2"></td>
+                </div>
+            </div>
+        </table>
+        <div class="line appear"></div>
+        <a href="/home">
+        <div class="alert alert-primary pop-alert appear" role="alert">
+            Gracz x wygrał!
+        </div>
+        </a>
+    </div>
+</div>
+<p class="figure"></p>
+<p class="turn"></p>
+<div class="game"></div>
+<a href="javascript:history.back()" id="play-button" class="btn btn-secondary btn-orange">Powrót</a>
+{% endblock %}
+{% block javascripts %}
+{{block.super}}
+<script>
+$.ajax({
+    url: "",
+    method: "GET"
+}).done((data) => {
+    
+    let board = $('#game-prototype').clone();
+        $('.game').append(board);
+    $.each(data, (index, move) => {
+        let nought = $('#nought-prototype').clone();
+        let cross = $('#cross-prototype').clone();
+        
+        if(move.player == 'A') {
+            $('.field[data-x="' + move.x + '"][data-y="'+move.y+'"]').html(nought);
+        } else {
+            $('.field[data-x="' + move.x + '"][data-y="'+move.y+'"]').html(cross);
+        }
+    })
+})
+</script>
+{% endblock %}
