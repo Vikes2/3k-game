@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 
 <h1>
@@ -61,9 +62,11 @@
                     $('.main-content-container').append('<p>Trwa oczekiwanie na przeciwnika...</p>');
                     break;
                 case 'new_game':
-                    let game = JSON.parse(data.message);
+                let game = JSON.parse(data.message);
                     $('.main-content-container').load('/game', () => {
                         resetBoard();
+                        let tekst = `<h2><strong><a href="/profile/${game.A}">${game.A}</a></strong> vs <strong><a href="/profile/${game.B}">${game.B}</a></strong></h2>`;
+                    $('.nicknames').html(tekst)
                         if (game.starts == figure) {
                             $('.turn').html("Teraz Twój ruch");
                             yourTurn = true;
@@ -71,7 +74,6 @@
                             $('.turn').html("Teraz ruch przeciwnika");
                         }
                     });
-                    console.log(game);
                     break;
                 case 'move':
                     let field = JSON.parse(data.message);
