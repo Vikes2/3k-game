@@ -15,6 +15,19 @@ def home(request):
     else:
         return render(request, "threeK_game/home.html")
 
+def profile(request, username):
+
+    try:
+        profile = Profile.objects.get(user__username=username)
+    except:
+        return redirect('three_k:home')
+
+    return render(request, 'threeK_game/profile.html', {'profile': profile})
+
+def last_matches(request):
+
+    return render(request, 'threeK_game/last-matches.html')
+
 def signup(request):
     if request.user.is_authenticated:
         return redirect('/')
