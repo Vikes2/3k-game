@@ -1,12 +1,23 @@
 {% extends 'base.html' %}
-
-{% block title %}Login{% endblock %}
-
 {% block content %}
-  <h2>Login</h2>
-  <form method="post">
+
+  <h2>Logowanie</h2>
+  {% if form.errors %}
+    <div class="alert alert-danger">
+      Nazwa użytkownika i hasło nie pasują. Spróbuj ponownie.
+    </div>
+  {% endif %}
+
+  <form method="post" class="auth-form">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
+    {%  for field in form %}
+      <div class="form-group">
+        {{field.errors}}
+        {{field}}
+      </div>
+    {% endfor %}
+    <input type="submit" value="Zaloguj się" class="btn btn-primary">
+    <a href="/" class="btn">Powrót</a>
   </form>
+
 {% endblock %}

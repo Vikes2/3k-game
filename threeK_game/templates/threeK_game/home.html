@@ -1,22 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
 
-
-
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <h1> HOME </h1>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <button id="play-button" class="btn btn-success">Play</button>
-        </div>
-    </div>
-
-</div>
-
+<h1>
+    <img src="../../static/threeK_game/images/tic-tac-toe.svg" class="logo-pic" alt="logo">
+     3K GAME
+</h1>
+<h3>Kółko krzyżyk kompromitacja</h3>
+<p>Nowa gra przeglądarkowa. Zagraj w kółko i krzyżyk <b>online</b>!</p>
+<button id="play-button" class="btn btn-secondary btn-orange">Graj</button>
+   
 {% endblock %}
 
 {% block javascripts %}
@@ -24,15 +16,35 @@
 <script>
 
     let gameSocket;
+    let figure;
+    let yourTurn;
 
-    $(document).on('click', '#play-button', () =>{
-        alert("Dołączono do Q");
-        initSocket();
-    });    
+    $(document).on('click', '#play-button', initSocket);
 
-    //setTimeout(()=> {
-    //    gameSocket.send(JSON.stringify({message: "Elo"}));        
-    //}, 3000);
+    $(document).on('click', '.test-button', () =>{
+        gameSocket.send(JSON.stringify({
+                message: "move",
+                x: $('.test-x-input').val(),
+                y: $('.test-y-input').val(),
+            }));        
+
+        //console.log($('.test-x-input').val())
+        //Console.Log($('test-y-input').value)
+
+
+    }); 
+
+    function resetBoard() {
+        let board = $('#game-prototype').clone();
+        $('.game').append(board);
+
+        if(figure == 'A') {
+            $('.figure').html('Grasz <b>kółkiem</b>.');
+        } else {
+            $('.figure').html('Grasz <b>krzyżykiem</b>.');
+        }
+
+    }
 
     function initSocket(){
         gameSocket = new WebSocket(
@@ -41,12 +53,124 @@
         gameSocket.onmessage = function(e){
             let data = JSON.parse(e.data);
             console.log(data);
+            yourTurn = false;
+            switch(data.content_type) {
+                case 'connect':
+                    $('.main-content-container').html('<div class="loader">  <div class="square" ></div>  <div class="square"></div>  <div class="square last"></div>  <div class="square clear"></div>  <div class="square"></div>  <div class="square last"></div>  <div class="square clear"></div>  <div class="square "></div>  <div class="square last"></div></div>');
+                    $('.main-content-container').append('<p>Trwa oczekiwanie na przeciwnika...</p>');
+                    break;
+                case 'new_game':
+                    let game = JSON.parse(data.message);
+                    $('.main-content-container').load('/game', () => {
+                        resetBoard();
+                        if (game.starts == figure) {
+                            $('.turn').html("Teraz Twój ruch");
+                            yourTurn = true;
+                        } else {
+                            $('.turn').html("Teraz ruch przeciwnika");
+                        }
+                    });
+                    console.log(game);
+                    break;
+                case 'move':
+                    let field = JSON.parse(data.message);
+                    let nought = $('#nought-prototype').clone();
+                    let cross = $('#cross-prototype').clone();
+                    
+                    if (field.player == 'A') {
+                        $('.field[data-x="' + field.x + '"][data-y="'+field.y+'"]').html(nought);
+                    } else {
+                        $('.field[data-x="' + field.x + '"][data-y="'+field.y+'"]').html(cross);                        
+                    }
+                    break;
+                case 'player':
+                    figure = data.message;
+                    break;
+                case 'turn':
+                    let turn = data.message;
+                    
+                    if(turn == figure) {
+                        $('.turn').html("Teraz Twój ruch.");
+                        yourTurn = true;
+                    } else {
+                        $('.turn').html("Ruch przeciwnika.");
+                    }
+                    break;
+                case 'finish':
+                    let parsedData = JSON.parse(data.message)
+                    
+                    if(parsedData.dc) {
+                        $('.pop-alert').html('Wygrałeś walkoverem!');
+                        $('.pop-alert').css('display', 'flex');
+                        break;
+                    }
+
+                    console.log(parsedData)
+                    $('.appear').css("display", "flex");
+
+                    if (parsedData.winner == figure) {
+                        $('.pop-alert').html("Wygrałeś!");
+                    } else {
+                        $('.pop-alert').html("Przegrałeś!");
+                    }
+
+                    
+                    switch(parsedData.pattern){
+                        case 0:
+                            $('.line').css("right", "360px");
+                            $('.line').css("transform", "rotate(90deg)");
+                            $('.line').css("top", "370px");
+                            break;
+                        case 1:
+                            $('.line').css("top", "210px");
+                            break;
+                        case 2:
+                            $('.line').css("transform", "rotate(45deg)");
+                            $('.line').css("top", "370px");
+                            $('.line').css("right", "120px");
+                            $('.line').css("width", "600px");
+                            break;
+                        case 3:
+                            $('.line').css("transform", "rotate(90deg)");
+                            $('.line').css("top", "370px");
+                            break;
+                        case 4:
+                            $('.line').css("top", "370px");
+                            break;
+                        case 5:
+                            $('.line').css("top", "370px");
+                            $('.line').css("right", "120px");
+                            $('.line').css("width", "600px");
+                            $('.line').css("transform", "rotate(135deg)");
+                            break;
+                        case 6:
+                            $('.line').css("transform", "rotate(90deg)");
+                            $('.line').css("top", "370px");
+                            $('.line').css("right", "40px");
+                            break;
+                        case 7:
+                            $('.line').css("top", "530px");
+                    }
+
+                    // $('.main-content-container').html
+            }
         }
     }
 
-    
+     $(document).on('click', '.field:empty', (event) =>{
+        const field = {
+            x: $(event.currentTarget).data('x'),
+            y: $(event.currentTarget).data('y')
+        };
 
+        if(yourTurn) {
+            gameSocket.send(JSON.stringify({
+                message: "move",
+                x: field.x,
+                y: field.y
+            }));
+        }
 
-
+    }); 
 </script>
 {% endblock %}
