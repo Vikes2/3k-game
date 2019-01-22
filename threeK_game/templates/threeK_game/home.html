@@ -60,9 +60,11 @@
                     $('.main-content-container').append('<p>Trwa oczekiwanie na przeciwnika...</p>');
                     break;
                 case 'new_game':
-                    let game = JSON.parse(data.message);
+                let game = JSON.parse(data.message);
                     $('.main-content-container').load('/game', () => {
                         resetBoard();
+                        let tekst = "<h2><strong>" + game.A + "</strong> vs <strong>" + game.B + "</strong></h2>";
+                    $('.nicknames').html(tekst)
                         if (game.starts == figure) {
                             $('.turn').html("Teraz Twój ruch");
                             yourTurn = true;
@@ -70,7 +72,6 @@
                             $('.turn').html("Teraz ruch przeciwnika");
                         }
                     });
-                    console.log(game);
                     break;
                 case 'move':
                     let field = JSON.parse(data.message);
